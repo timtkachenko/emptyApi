@@ -1,0 +1,122 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: api server
+  description: api server
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: x-token
+    in: header
+
+basePath: /api
+
+schemes:
+  - http
+
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+paths:
+  /health:
+    x-swagger-router-controller: health
+    get:
+      description: Healtcheck function
+      operationId: health
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+  /key:
+    get:
+      summary: key
+      operationId: key
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: string
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
+  '/':
+    post:
+      security:
+        - Bearer: []
+      summary: test
+      operationId: post
+      parameters:
+        - in: body
+          name: body
+          required: true
+          description: Create test
+          schema:
+            $ref: '#/definitions/test'
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: object
+            properties:
+              code:
+                $ref: "#/definitions/SuccessCode"
+              data:
+                $ref: '#/definitions/test'
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
+  '/{id}':
+    get:
+      security:
+        - Bearer: []
+      x-security-scopes:
+      summary: test
+      operationId: get
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          description: test Id
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            type: object
+            properties:
+              code:
+                $ref: "#/definitions/SuccessCode"
+              data:
+                $ref: '#/definitions/test'
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Error"
+
+definitions:
+  SuccessCode:
+    description: Status message for successful request
+    type: number
+    example: 1
+
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+  test:
+    type: object
+    properties:
+      id:
+        description: test ID
+        type: integer
+      name:
+        description: Name
+        type: string
